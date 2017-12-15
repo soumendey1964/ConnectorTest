@@ -23,6 +23,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'com.paxata.connector.build.ConnectorBuildPlugin'
+apply plugin: 'jacoco'
 
 repositories {
   mavenLocal()
@@ -115,3 +116,10 @@ test {
 
 //integrationTest.mustRunAfter test
 //check.dependsOn integrationTest
+
+jacocoTestReport {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+}
+
