@@ -103,15 +103,15 @@ test {
   include '**/DynamoDBConnectorTestSuite.class'
 }
 
-task integrationTest(type: Test) {
-  testClassesDirs = sourceSets.integrationTest.output.classesDirs
-  classpath = sourceSets.integrationTest.runtimeClasspath
+// task integrationTest(type: Test) {
+//  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+//  classpath = sourceSets.integrationTest.runtimeClasspath
 
-  outputs.upToDateWhen { false }
-  reports.html.destination file("${reporting.baseDir}/integrationTests/test")
+//  outputs.upToDateWhen { false }
+//  reports.html.destination file("${reporting.baseDir}/integrationTests/test")
 
-  include '**/DynamoDBConnectorIntegrationTestSuite.class'
-}
+//  include '**/DynamoDBConnectorIntegrationTestSuite.class'
+//}
 
-integrationTest.mustRunAfter test
-check.dependsOn integrationTest
+//integrationTest.mustRunAfter test
+//check.dependsOn integrationTest
