@@ -1,0 +1,182 @@
+{
+  "class": "com.paxata.connector.dynamodb.DynamoDBConnectorFactory",
+  "name": "dynamodb.connector.name",
+  "description": "dynamodb.connector.description",
+  "bundle": "connector-dynamodb",
+  "groupId": "paxata",
+  "atrifactId": "connector-dynamodb",
+  "version": "${version}",
+  "external": "true",
+  "fields": [
+    {
+      "key": "proxy.setup",
+      "type": "boolean"
+    },
+    {
+      "key": "proxy.host",
+      "type": "text",
+      "placeholder": "proxy.host.placeholder",
+      "hidden": "proxy.setup == false"
+    },
+    {
+      "key": "proxy.port",
+      "type": "number",
+      "placeholder": "proxy.port.placeholder",
+      "hidden": "proxy.setup == false"
+    },
+    {
+      "key": "proxy.auth",
+      "type": "boolean",
+      "hidden": "proxy.setup == false"
+    },
+    {
+      "key": "proxy.user",
+      "type": "text",
+      "encrypt": "true",
+      "hidden": "proxy.auth == false"
+    },
+    {
+      "key": "proxy.password",
+      "type": "text",
+      "encrypt": "true",
+      "hidden": "proxy.auth == false"
+    },
+    {
+      "key": "aws.region",
+      "type": "dropdown",
+      "fieldOptions": {
+        "us-east-1": "aws.region.us-east-1",
+        "us-east-2": "aws.region.us-east-2",
+        "us-west-1": "aws.region.us-west-1",
+        "us-west-2": "aws.region.us-west-2",
+        "eu-west-1": "aws.region.eu-west-1",
+        "eu-west-2": "aws.region.eu-west-2",
+        "eu-central-1": "aws.region.eu-central-1",
+        "ap-south-1": "aws.region.ap-south-1",
+        "ap-northeast-2": "aws.region.ap-northeast-2",
+        "ap-southeast-1": "aws.region.ap-southeast-1",
+        "ap-southeast-2": "aws.region.ap-southeast-2",
+        "ap-northeast-1": "aws.region.ap-northeast-1",
+        "sa-east-1": "aws.region.sa-east-1",
+        "ca-central-1": "aws.region.ca-central-1"
+      }
+    },
+    {
+      "key": "aws.auth.type",
+      "type": "dropdown",
+      "fieldOptions": {
+        "awsCredential": "aws.auth.type.awsCredential",
+        "iamRole": "aws.auth.type.iamRole"
+      },
+      "default": "awsCredential"
+    },
+    {
+      "key": "aws.accessKey",
+      "type": "text",
+      "encrypt": "true",
+      "hidden": "aws.auth.type !='awsCredential'"
+    },
+    {
+      "key": "aws.secretKey",
+      "type": "text",
+      "encrypt": "true",
+      "hidden": "aws.auth.type !='awsCredential'"
+    },
+    {
+      "key": "ddb.table.sampleItems",
+      "type": "number"
+    }
+  ],
+  "groupings": [
+    {
+      "name": "proxy.settings.legend",
+      "fields": [
+        "proxy.setup",
+        "proxy.host",
+        "proxy.port",
+        "proxy.auth",
+        "proxy.user",
+        "proxy.password"
+      ]
+    },
+    {
+      "name": "aws.config.legend",
+      "fields": [
+        "aws.region",
+        "aws.auth.type",
+        "aws.accessKey",
+        "aws.secretKey",
+        "ddb.table.sampleItems"
+      ]
+    }
+  ],
+  "connector": {
+    "required": [],
+    "optional": [
+      "proxy.setup",
+      "proxy.host",
+      "proxy.port",
+      "proxy.auth",
+      "proxy.user",
+      "proxy.password",
+      "aws.region",
+      "aws.auth.type",
+      "aws.accessKey",
+      "aws.secretKey",
+      "ddb.table.sampleItems"
+    ],
+    "required_if_undefined": [],
+    "help": "dynamodb.connector.help"
+  },
+  "datasource": {
+    "required": [],
+    "optional": [
+      "proxy.setup",
+      "proxy.host",
+      "proxy.port",
+      "proxy.auth",
+      "proxy.user",
+      "proxy.password",
+      "aws.accessKey",
+      "aws.secretKey"
+    ],
+    "required_if_undefined": [
+      "proxy.host",
+      "proxy.port",
+      "proxy.user",
+      "proxy.password",
+      "aws.region",
+      "aws.auth.type",
+      "ddb.table.sampleItems"
+    ],
+    "help": "dynamodb.datasource.help"
+  },
+  "session": {
+    "required": [],
+    "optional": [],
+    "required_if_undefined": [
+      "aws.accessKey",
+      "aws.secretKey"
+    ],
+    "help": "dynamodb.session.help"
+  },
+  "supportedFormats": {
+    "import": {
+      "stream": [],
+      "record": [
+        {
+          "key": "dynamoDB",
+          "displayName": "dynamodb.import.format.name",
+          "extensions": [],
+          "mimeTypes": [
+            "application/x.dbtable"
+          ]
+        }
+      ]
+    },
+    "export": {
+      "stream": [],
+      "record": []
+    }
+  }
+}

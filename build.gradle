@@ -1,0 +1,117 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+
+    maven {
+      url mavenRepoURL
+      credentials {
+        username mavenRepoUser
+        password mavenRepoPassword
+      }
+    }
+  }
+
+  dependencies {
+    // add the gradle connector build plugin jar as a classpath dependency of the buildscript
+    // Note that this does not affect the classpath of the connector at all, only the build script
+    // You'll want to make sure that the version number here is set to the latest
+    classpath 'com.paxata:gradle-connector-build:0.2.1'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.paxata.connector.build.ConnectorBuildPlugin'
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+
+  maven {
+    url mavenRepoURL
+    credentials {
+      username mavenRepoUser
+      password mavenRepoPassword
+    }
+  }
+
+  maven {
+    url 'https://s3-us-west-2.amazonaws.com/dynamodb-local/release'
+  }
+
+  jcenter()
+}
+
+connectors {
+  'connector-dynamodb' {
+  }
+}
+
+sourceSets {
+  integrationTest {
+    java {
+      srcDir file('src/integrationTest/java')
+
+      compileClasspath += main.output + test.output
+      runtimeClasspath += main.output + test.output
+    }
+
+    resources.srcDir file('src/integrationTest/resources')
+  }
+}
+
+configurations {
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+}
+
+dependencies {
+  compile 'com.paxata:connector-spi:3.0.2'
+
+  compile 'com.amazonaws:aws-java-sdk-core:1.11.234'
+  compile 'com.amazonaws:aws-java-sdk-dynamodb:1.11.234'
+
+  compile 'com.google.guava:guava:20.0'
+
+  testCompile 'junit:junit:4.12'
+  testCompile 'org.mockito:mockito-core:2.7.22'
+
+  testCompile 'org.powermock:powermock-module-junit4:1.7.3'
+  testCompile 'org.powermock:powermock-api-mockito2:1.7.3'
+
+  testCompile 'com.amazonaws:DynamoDBLocal:[1.11,2.0)'
+  testCompile 'com.almworks.sqlite4java:sqlite4java:1.0.392'
+  testCompile 'com.almworks.sqlite4java:sqlite4java-win32-x86:1.0.392@dll'
+  testCompile 'com.almworks.sqlite4java:sqlite4java-win32-x64:1.0.392@dll'
+  testCompile 'com.almworks.sqlite4java:libsqlite4java-osx:1.0.392@dylib'
+  testCompile 'com.almworks.sqlite4java:libsqlite4java-linux-i386:1.0.392@so'
+  testCompile 'com.almworks.sqlite4java:libsqlite4java-linux-amd64:1.0.392@so'
+}
+
+task copyToTestLib(type: Copy) {
+  into "$buildDir/test-lib"
+  from configurations.testCompile.files
+}
+
+test {
+  dependsOn copyToTestLib
+  systemProperty 'sqlite4java.library.path', "$buildDir/test-lib"
+
+  include '**/OptionUtilsTest.class'
+  include '**/CreateDynamoDBTest.class'
+  include '**/DynamoDBConnectorTestSuite.class'
+}
+
+task integrationTest(type: Test) {
+  testClassesDirs = sourceSets.integrationTest.output.classesDirs
+  classpath = sourceSets.integrationTest.runtimeClasspath
+
+  outputs.upToDateWhen { false }
+  reports.html.destination file("${reporting.baseDir}/integrationTests/test")
+
+  include '**/DynamoDBConnectorIntegrationTestSuite.class'
+}
+
+integrationTest.mustRunAfter test
+check.dependsOn integrationTest
